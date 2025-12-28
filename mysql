@@ -1,0 +1,38 @@
+-- 创建数据库（执行一次即可）
+CREATE DATABASE IF NOT EXISTS drama_club DEFAULT CHARSET=utf8mb4;
+USE drama_club;
+
+-- 表1：剧社剧目表 (drama_info) 【主表】- 存储剧社历年演出剧目核心信息
+CREATE TABLE drama_info (
+    drama_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '剧目编号，主键，自增',
+    drama_name VARCHAR(50) NOT NULL COMMENT '剧目名称',
+    drama_type VARCHAR(30) COMMENT '剧目类型：话剧/小品/音乐剧/情景剧',
+    create_year INT NOT NULL COMMENT '编排年份',
+    director VARCHAR(20) COMMENT '导演'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='剧社剧目基础信息表';
+
+-- 表2：剧社演出资料表 (drama_data) 【从表】- 存储每部剧的演出详情、获奖、演员等资料，关联主表
+CREATE TABLE drama_data (
+    data_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '资料编号，主键，自增',
+    drama_id INT NOT NULL COMMENT '剧目编号，关联剧目表，外键',
+    actor_name VARCHAR(100) COMMENT '主演人员，多个用逗号分隔',
+    perform_times INT DEFAULT 1 COMMENT '演出场次',
+    award VARCHAR(50) COMMENT '获奖情况：无/校级一等奖/市级二等奖等',
+    remark VARCHAR(200) COMMENT '备注：演出地点/剧目简介',
+    FOREIGN KEY (drama_id) REFERENCES drama_info(drama_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='剧社剧目演出详细资料表';
+
+-- 插入测试数据（直接执行，省去手动录入，方便测试功能）
+INSERT INTO drama_info (drama_name, drama_type, create_year, director) VALUES
+('雷雨', '话剧', 2020, '张三'),
+('青春答卷', '情景剧', 2021, '李四'),
+('追梦人', '音乐剧', 2022, '王五'),
+('茶馆', '话剧', 2023, '赵六'),
+('毕业季', '小品', 2024, '钱七');
+
+INSERT INTO drama_data (drama_id, actor_name, perform_times, award, remark) VALUES
+(1, '李华,张明,王芳', 5, '校级戏剧节二等奖', '学校大礼堂演出'),
+(2, '刘洋,陈晨', 3, '无', '迎新晚会演出'),
+(3, '赵阳,孙悦,周琦', 6, '市级大学生戏剧节三等奖', '市文化宫演出'),
+(4, '吴桐,郑浩', 4, '校级一等奖', '校庆演出'),
+(5, '冯鑫,韩雪', 2, '无', '毕业晚会演出');
